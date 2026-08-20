@@ -150,19 +150,10 @@ function orderText() {
   const entries = orderEntries();
   if (!entries.length) return '';
   const lines = entries.map(e => `${e.qty}x ${e.hull.name}`);
-  return `Hi ${DATA.character},
-
-` +
-    `I'd like to buy the following hulls from your stock at ${DATA.location}:
-
-` +
-    lines.join('
-') +
-    `
-
-Estimated total: ${isk(orderTotalValue())}
-
-Thanks!`;
+  return `Hi ${DATA.character},\n\n` +
+    `I'd like to buy the following hulls from your stock at ${DATA.location}:\n\n` +
+    lines.join('\n') +
+    `\n\nEstimated total: ${isk(orderTotalValue())}\n\nThanks!`;
 }
 
 function render() {
