@@ -11,7 +11,6 @@ import base64
 import json
 import subprocess
 import sys
-import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -29,8 +28,8 @@ ESI = "https://esi.evetech.net"
 TOKEN_URL = "https://login.eveonline.com/v2/oauth/token"
 
 SHIP_CATEGORY_ID = 6  # category "Ship"
-JITA_STATION_ID = 60003760  # Jita IV - Moon 4 - Caldari Navy Assembly Plant
-THE_FORGE_REGION_ID = 10000002
+JANICE_RPC = "https://janice.e-351.com/api/rpc/v1"
+JANICE_JITA_MARKET_ID = 2  # "Jita 4-4"
 STATION_ID = None  # filled from config at runtime
 
 UA = "AssetLister github.com/emabe390/AssetLister"
@@ -129,24 +128,48 @@ def esi_post_names(ids):
     return result
 
 
-def fetch_jita_sell_price(type_id):
-    """Cheapest sell order for a type at Jita 4-4, or None if none exist."""
-    url = f"{ESI}/v1/markets/{THE_FORGE_REGION_ID}/orders/?type_id={type_id}&order_type=sell"
-    page = 1
-    best = None
-    while True:
-        req = urllib.request.Request(f"{url}&page={page}", headers={"User-Agent": UA})
-        with urllib.request.urlopen(req) as r:
-            total_pages = int(r.headers.get("x-pages", 1))
-            for o in json.loads(r.read()):
-                if o["location_id"] == JITA_STATION_ID:
-                    p = o["price"]
-                    if best is None or p < best:
-                        best = p
-        if page >= total_pages:
-            break
-        page += 1
-    return best
+def fetch_janice_prices(hulls, names):
+    """Price all hulls via a single Janice appraisal (Jita 4-4 market).
+
+    Returns {type_id: unit_sell_price}. Uses the 'effective' sell price,
+    the price for selling the whole stack.
+    """
+    # Janice paste format: "<name> x<qty>" per line
+    lines = [f"{names.get(tid, tid)} x{qty}" for tid, qty in hulls.items()]
+    params = {
+        "marketId": JANICE_JITA_MARKET_ID,
+        "designation": 1,
+        "pricing": 1,        # effective prices
+        "pricingVariant": 1,
+        "pricePercentage": 100,
+        "input": "\n".join(lines),
+        "comment": "",
+        "compactize": False,
+    }
+    body = json.dumps({"method": "Appraisal.create", "params": params, "id": 1}).encode()
+    req = urllib.request.Request(
+        JANICE_RPC,
+        data=body,
+        headers={
+            "User-Agent": UA,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+        method="POST",
+    )
+    with urllib.request.urlopen(req) as r:
+        result = json.loads(r.read())["result"]
+
+    prices = {}
+    for item in result.get("items", []):
+        tid = item["itemType_eid"]
+        qty = item["amount"]
+        sell_total = item.get("effectivePrices", {}).get("sellPrice", 0)
+        if qty > 0:
+            prices[tid] = sell_total / qty
+    if result.get("failures"):
+        print(f"  warning: janice failures: {result['failures'][:200]}")
+    return prices
 
 
 def is_ship_hull(type_id):
@@ -205,17 +228,15 @@ def main():
     # Resolve names
     names = esi_post_names(list(hulls.keys()))
 
-    # Jita 4-4 sell prices (cheapest sell order per type)
-    print("Fetching Jita sell prices...")
-    prices = {}
-    for tid in hulls:
-        try:
-            prices[tid] = fetch_jita_sell_price(tid)
-        except urllib.error.HTTPError as e:
-            print(f"  warning: market orders for type {tid} failed: {e.code}")
-        time.sleep(0.1)  # stay polite with ESI rate limits
-    priced = sum(1 for p in prices.values() if p is not None)
-    print(f"  {priced}/{len(hulls)} types have sell orders at Jita 4-4")
+    # Janice sell prices (Jita 4-4, whole-stack effective prices, one API call)
+    print("Fetching Janice prices (Jita 4-4)...")
+    try:
+        prices = fetch_janice_prices(hulls, names)
+    except (urllib.error.URLError, urllib.error.HTTPError) as e:
+        print(f"  warning: Janice pricing failed ({e}); continuing without prices")
+        prices = {}
+    priced = sum(1 for p in prices.values() if p)
+    print(f"  {priced}/{len(hulls)} types priced")
 
     # Build data.json
     rows = [
@@ -223,7 +244,7 @@ def main():
             "type_id": tid,
             "name": names.get(tid, f"type {tid}"),
             "quantity": qty,
-            "jita_sell": prices.get(tid),
+            "jita_sell": prices.get(tid) or None,
         }
         for tid, qty in sorted(hulls.items(), key=lambda kv: -kv[1])
     ]
@@ -292,6 +313,7 @@ INDEX_HTML = """<!DOCTYPE html>
 <p class="meta">Last updated: <span class="updated" id="updated"></span></p>
 <table>
   <thead><tr><th>Hull</th><th class="qty">Qty</th><th class="price">Jita Sell</th><th class="price">Line Value</th></tr></thead>
+<!-- prices via Janice (janice.e-351.com), Jita 4-4 market -->
   <tbody id="rows"></tbody>
 </table>
 <p class="total" id="total"></p>
