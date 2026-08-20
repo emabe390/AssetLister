@@ -14,6 +14,8 @@
   th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid #333; }
   th { color: #c9a; }
   td.qty { text-align: right; }
+  th.qty, th.price { text-align: right; }
+  td.price { text-align: right; color: #b6c7a6; white-space: nowrap; }
   tr:hover { background: #1c1c1c; }
   .icon { width: 32px; height: 32px; vertical-align: middle; margin-right: 0.6rem; }
   .hullname { display: inline-flex; align-items: center; gap: 0.6rem; }
@@ -25,7 +27,7 @@
 <p class="meta" id="meta">Loading…</p>
 <p class="meta">Last updated: <span class="updated" id="updated"></span></p>
 <table>
-  <thead><tr><th>Hull</th><th>Quantity</th></tr></thead>
+  <thead><tr><th>Hull</th><th class="qty">Qty</th><th class="price">Jita Sell</th><th class="price">Line Value</th></tr></thead>
   <tbody id="rows"></tbody>
 </table>
 <p class="total" id="total"></p>
@@ -41,16 +43,29 @@ function timeAgo(iso) {
     }
   }
 }
+function isk(n) {
+  if (n === null || n === undefined) return '—';
+  if (n >= 1e12) return (n / 1e12).toFixed(2) + 'T ISK';
+  if (n >= 1e9)  return (n / 1e9).toFixed(2) + 'B ISK';
+  if (n >= 1e6)  return (n / 1e6).toFixed(2) + 'M ISK';
+  if (n >= 1e3)  return (n / 1e3).toFixed(1) + 'K ISK';
+  return n.toFixed(0) + ' ISK';
+}
 fetch('data.json').then(r => r.json()).then(d => {
   document.getElementById('meta').textContent =
     `${d.character} — ${d.location}`;
   document.getElementById('rows').innerHTML = d.hulls
-    .map(h => `<tr><td><span class="hullname">` +
-      `<img class="icon" loading="lazy" alt="" ` +
-      `src="https://images.evetech.net/types/${h.type_id}/icon?size=32">` +
-      `${h.name}</span></td><td class="qty">${h.quantity}</td></tr>`).join('');
+    .map(h => {
+      const value = h.jita_sell !== null ? h.jita_sell * h.quantity : null;
+      return `<tr><td><span class="hullname">` +
+        `<img class="icon" loading="lazy" alt="" ` +
+        `src="https://images.evetech.net/types/${h.type_id}/icon?size=32">` +
+        `${h.name}</span></td><td class="qty">${h.quantity}</td>` +
+        `<td class="price">${isk(h.jita_sell)}</td>` +
+        `<td class="price">${isk(value)}</td></tr>`;
+    }).join('');
   document.getElementById('total').textContent =
-    `${d.total_hulls} hulls total (${d.distinct_types} types)`;
+    `${d.total_hulls} hulls total (${d.distinct_types} types) — est. value ${isk(d.total_value)}`;
   const upd = document.getElementById('updated');
   const tick = () => {
     upd.textContent = `${new Date(d.updated).toLocaleString()} — ${timeAgo(d.updated)}`;
