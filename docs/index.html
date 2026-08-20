@@ -46,6 +46,11 @@
              border: 1px solid #444; border-radius: 4px; padding: 0.5rem;
              font-family: ui-monospace, monospace; font-size: 0.8rem; resize: vertical; }
   .copyBtn { width: 100%; margin-top: 0.6rem; padding: 0.5rem; font-size: 0.95rem; }
+  .clearBtn { width: 100%; margin-top: 0.4rem; padding: 0.4rem; font-size: 0.85rem; }
+  .clearBtn:hover { border-color: #a66; }
+  .panelHead { display: flex; justify-content: space-between; align-items: center;
+               margin-bottom: 0.8rem; }
+  .panelHead h2 { margin: 0; }
 </style>
 </head>
 <body>
@@ -62,12 +67,16 @@
     <p class="total" id="total"></p>
   </div>
   <aside class="panel">
-    <h2>Your Order</h2>
+    <div class="panelHead">
+      <h2>Your Order</h2>
+      <button id="clearBtn" title="Remove all items from your order">Empty cart</button>
+    </div>
     <div id="orderItems"><p class="empty">Use the Buy buttons to add hulls to your order.</p></div>
     <p class="orderTotal" id="orderTotal"></p>
     <textarea id="orderText" rows="12" readonly spellcheck="false"
       placeholder="Your EVEmail-ready order will appear here…"></textarea>
     <button class="copyBtn" id="copyBtn">Copy order for EVEmail</button>
+    <button class="clearBtn" id="clearBtn">Empty cart</button>
   </aside>
 </div>
 <script>
@@ -215,6 +224,12 @@ document.getElementById('copyBtn').addEventListener('click', async () => {
   const btn = document.getElementById('copyBtn');
   btn.textContent = ok ? 'Copied! ✓' : 'Copy failed — select the text manually';
   setTimeout(() => { btn.textContent = 'Copy order for EVEmail'; }, 2000);
+});
+
+// Empty cart
+document.getElementById('clearBtn').addEventListener('click', () => {
+  cart = {};
+  render();
 });
 
 fetch('data.json').then(r => r.json()).then(d => {
