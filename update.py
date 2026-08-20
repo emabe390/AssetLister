@@ -272,7 +272,15 @@ def main():
     old_index = index_file.read_text(encoding="utf-8") if index_file.exists() else None
     index_file.write_text(INDEX_HTML, encoding="utf-8")
 
-    if old == new and old_index == INDEX_HTML:
+    # Ignore the 'updated' timestamp: only real data changes trigger a push
+    def without_updated(text):
+        if text is None:
+            return None
+        obj = json.loads(text)
+        obj.pop("updated", None)
+        return json.dumps(obj, sort_keys=True)
+
+    if without_updated(old) == without_updated(new) and old_index == INDEX_HTML:
         print("No changes since last run.")
         return
 
