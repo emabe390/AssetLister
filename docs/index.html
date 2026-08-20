@@ -5,34 +5,78 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AssetLister — Kalder Okanata</title>
 <style>
-  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 48rem;
-         background: #111; color: #ddd; }
+  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 74rem;
+         background: #111; color: #ddd; padding: 0 1rem; }
   h1 { color: #e8e2cf; }
+  h2 { color: #e8e2cf; font-size: 1.1rem; margin: 0 0 0.8rem; }
   .meta { color: #888; margin-bottom: 1.5rem; }
   .updated { color: #c9a; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 24rem; gap: 1.5rem;
+            align-items: start; }
+  @media (max-width: 64rem) { .layout { grid-template-columns: 1fr; } }
   table { border-collapse: collapse; width: 100%; }
   th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid #333; }
   th { color: #c9a; }
-  td.qty { text-align: right; }
-  th.qty, th.price { text-align: right; }
-  td.price { text-align: right; color: #b6c7a6; white-space: nowrap; }
+  th.qty, th.price, td.qty, td.price { text-align: right; }
+  td.price { color: #b6c7a6; white-space: nowrap; }
   tr:hover { background: #1c1c1c; }
   .icon { width: 32px; height: 32px; vertical-align: middle; margin-right: 0.6rem; }
   .hullname { display: inline-flex; align-items: center; gap: 0.6rem; }
   .total { margin-top: 1rem; font-weight: bold; }
+  .buy { display: inline-flex; gap: 0.35rem; justify-content: flex-end; flex-wrap: wrap; }
+  button { background: #2a2a2a; color: #ddd; border: 1px solid #444; border-radius: 4px;
+           padding: 0.25rem 0.6rem; cursor: pointer; font-size: 0.85rem; }
+  button:hover { background: #3a3a3a; border-color: #c9a; }
+  .panel { background: #1a1a1a; border: 1px solid #333; border-radius: 6px;
+           padding: 1rem; position: sticky; top: 1rem; }
+  .orderItem { display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0;
+               border-bottom: 1px solid #2a2a2a; }
+  .orderItem .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+                     white-space: nowrap; }
+  .orderItem input { width: 4.4rem; background: #111; color: #ddd; border: 1px solid #444;
+                     border-radius: 4px; padding: 0.2rem 0.3rem; text-align: right; }
+  .orderItem .linePrice { color: #b6c7a6; white-space: nowrap; font-size: 0.85rem;
+                          min-width: 5.5rem; text-align: right; }
+  .orderItem .remove { color: #a66; border: none; background: none; font-size: 1rem;
+                       padding: 0.1rem 0.3rem; }
+  .orderItem .remove:hover { color: #f88; background: none; border: none; }
+  .empty { color: #777; font-style: italic; }
+  .orderTotal { font-weight: bold; margin: 0.8rem 0; }
+  textarea { width: 100%; box-sizing: border-box; background: #111; color: #bbb;
+             border: 1px solid #444; border-radius: 4px; padding: 0.5rem;
+             font-family: ui-monospace, monospace; font-size: 0.8rem; resize: vertical; }
+  .copyBtn { width: 100%; margin-top: 0.6rem; padding: 0.5rem; font-size: 0.95rem; }
 </style>
 </head>
 <body>
 <h1>Packaged Ship Hulls</h1>
 <p class="meta" id="meta">Loading…</p>
 <p class="meta">Last updated: <span class="updated" id="updated"></span></p>
-<table>
-  <thead><tr><th>Hull</th><th class="qty">Qty</th><th class="price">Jita Sell</th><th class="price">Line Value</th></tr></thead>
+<div class="layout">
+  <div>
+    <table>
+      <thead><tr><th>Hull</th><th class="qty">In Stock</th><th class="price">Unit Price</th><th></th></tr></thead>
 <!-- prices via Janice (janice.e-351.com), Jita 4-4 market -->
-  <tbody id="rows"></tbody>
-</table>
-<p class="total" id="total"></p>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="total" id="total"></p>
+  </div>
+  <aside class="panel">
+    <h2>Your Order</h2>
+    <div id="orderItems"><p class="empty">Use the Buy buttons to add hulls to your order.</p></div>
+    <p class="orderTotal" id="orderTotal"></p>
+    <textarea id="orderText" rows="12" readonly spellcheck="false"
+      placeholder="Your EVEmail-ready order will appear here…"></textarea>
+    <button class="copyBtn" id="copyBtn">Copy order for EVEmail</button>
+  </aside>
+</div>
 <script>
+const CART_KEY = 'assetlister_cart_v1';
+let DATA = null;
+let hullById = {};
+let cart = {};
+try { cart = JSON.parse(localStorage.getItem(CART_KEY)) || {}; } catch (e) { cart = {}; }
+
 function timeAgo(iso) {
   const s = Math.floor((Date.now() - new Date(iso)) / 1000);
   if (s < 5) return 'just now';
@@ -52,19 +96,154 @@ function isk(n) {
   if (n >= 1e3)  return (n / 1e3).toFixed(1) + 'K ISK';
   return n.toFixed(0) + ' ISK';
 }
+function esc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+
+function saveCart() {
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+}
+
+function clampCartToStock() {
+  // Stock changes between visits — drop or trim anything no longer available.
+  for (const tid of Object.keys(cart)) {
+    const hull = hullById[tid];
+    if (!hull || hull.quantity <= 0 || cart[tid] <= 0) delete cart[tid];
+    else if (cart[tid] > hull.quantity) cart[tid] = hull.quantity;
+  }
+}
+
+function addToCart(tid, n) {
+  const hull = hullById[tid];
+  if (!hull) return;
+  const qty = Math.min((cart[tid] || 0) + n, hull.quantity);
+  if (qty > 0) cart[tid] = qty;
+  render();
+}
+
+function setCartQty(tid, qty) {
+  const hull = hullById[tid];
+  if (!hull) return;
+  qty = Math.max(0, Math.min(Math.floor(qty) || 0, hull.quantity));
+  if (qty > 0) cart[tid] = qty; else delete cart[tid];
+  render();
+}
+
+function removeFromCart(tid) {
+  delete cart[tid];
+  render();
+}
+
+function orderEntries() {
+  return Object.keys(cart)
+    .map(tid => hullById[tid] ? { tid, hull: hullById[tid], qty: cart[tid] } : null)
+    .filter(Boolean)
+    .sort((a, b) => a.hull.name.localeCompare(b.hull.name));
+}
+
+function orderTotalValue() {
+  return orderEntries().reduce((sum, e) =>
+    sum + (e.hull.jita_sell ? e.hull.jita_sell * e.qty : 0), 0);
+}
+
+function orderText() {
+  const entries = orderEntries();
+  if (!entries.length) return '';
+  const lines = entries.map(e => `${e.qty}x ${e.hull.name}`);
+  return `Hi ${DATA.character},
+
+` +
+    `I'd like to buy the following hulls from your stock at ${DATA.location}:
+
+` +
+    lines.join('
+') +
+    `
+
+Estimated total: ${isk(orderTotalValue())}
+
+Thanks!`;
+}
+
+function render() {
+  saveCart();
+  const entries = orderEntries();
+  const itemsEl = document.getElementById('orderItems');
+  if (!entries.length) {
+    itemsEl.innerHTML = '<p class="empty">Use the Buy buttons to add hulls to your order.</p>';
+  } else {
+    itemsEl.innerHTML = entries.map(e => {
+      const line = e.hull.jita_sell ? isk(e.hull.jita_sell * e.qty) : '—';
+      return `<div class="orderItem">` +
+        `<span class="name" title="${esc(e.hull.name)}">${esc(e.hull.name)}</span>` +
+        `<input type="number" min="1" max="${e.hull.quantity}" value="${e.qty}" data-tid="${e.tid}">` +
+        `<span class="linePrice">${line}</span>` +
+        `<button class="remove" data-remove="${e.tid}" title="Remove">✕</button>` +
+        `</div>`;
+    }).join('');
+  }
+  document.getElementById('orderTotal').textContent = entries.length
+    ? `${entries.length} item type${entries.length > 1 ? 's' : ''} — est. ${isk(orderTotalValue())}`
+    : '';
+  document.getElementById('orderText').value = orderText();
+}
+
+// Buy buttons in the hull table
+document.getElementById('rows').addEventListener('click', ev => {
+  const btn = ev.target.closest('button[data-buy]');
+  if (!btn) return;
+  const tid = btn.dataset.tid;
+  if (btn.dataset.buy === 'max') {
+    const hull = hullById[tid];
+    if (hull) setCartQty(tid, hull.quantity);
+  } else {
+    addToCart(tid, parseInt(btn.dataset.buy, 10));
+  }
+});
+
+// Quantity edits + removal in the order panel
+document.getElementById('orderItems').addEventListener('change', ev => {
+  const input = ev.target.closest('input[data-tid]');
+  if (input) setCartQty(input.dataset.tid, parseInt(input.value, 10));
+});
+document.getElementById('orderItems').addEventListener('click', ev => {
+  const btn = ev.target.closest('button[data-remove]');
+  if (btn) removeFromCart(btn.dataset.remove);
+});
+
+// Copy-to-clipboard for the EVEmail
+document.getElementById('copyBtn').addEventListener('click', async () => {
+  const ta = document.getElementById('orderText');
+  if (!ta.value) return;
+  let ok = false;
+  try { await navigator.clipboard.writeText(ta.value); ok = true; }
+  catch (e) {
+    ta.select();
+    ok = document.execCommand('copy');
+  }
+  const btn = document.getElementById('copyBtn');
+  btn.textContent = ok ? 'Copied! ✓' : 'Copy failed — select the text manually';
+  setTimeout(() => { btn.textContent = 'Copy order for EVEmail'; }, 2000);
+});
+
 fetch('data.json').then(r => r.json()).then(d => {
+  DATA = d;
+  for (const h of d.hulls) hullById[h.type_id] = h;
+  clampCartToStock();
+
   document.getElementById('meta').textContent =
     `${d.character} — ${d.location}`;
   document.getElementById('rows').innerHTML = d.hulls
-    .map(h => {
-      const value = h.jita_sell !== null ? h.jita_sell * h.quantity : null;
-      return `<tr><td><span class="hullname">` +
-        `<img class="icon" loading="lazy" alt="" ` +
-        `src="https://images.evetech.net/types/${h.type_id}/icon?size=32">` +
-        `${h.name}</span></td><td class="qty">${h.quantity}</td>` +
-        `<td class="price">${isk(h.jita_sell)}</td>` +
-        `<td class="price">${isk(value)}</td></tr>`;
-    }).join('');
+    .map(h => `<tr><td><span class="hullname">` +
+      `<img class="icon" loading="lazy" alt="" ` +
+      `src="https://images.evetech.net/types/${h.type_id}/icon?size=32">` +
+      `${esc(h.name)}</span></td><td class="qty">${h.quantity}</td>` +
+      `<td class="price">${isk(h.jita_sell)}</td>` +
+      `<td><span class="buy">` +
+      `<button data-buy="1" data-tid="${h.type_id}">Buy 1</button>` +
+      `<button data-buy="10" data-tid="${h.type_id}">Buy 10</button>` +
+      `<button data-buy="max" data-tid="${h.type_id}">Max (${h.quantity})</button>` +
+      `</span></td></tr>`).join('');
   document.getElementById('total').textContent =
     `${d.total_hulls} hulls total (${d.distinct_types} types) — est. value ${isk(d.total_value)}`;
   const upd = document.getElementById('updated');
@@ -73,6 +252,7 @@ fetch('data.json').then(r => r.json()).then(d => {
   };
   tick();
   setInterval(tick, 1000);
+  render();
 }).catch(e => document.getElementById('meta').textContent = 'Failed to load data');
 </script>
 </body>
