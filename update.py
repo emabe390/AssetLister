@@ -202,13 +202,12 @@ def main():
     new = json.dumps(data, indent=4)
     data_file.write_text(new, encoding="utf-8")
 
-    # Ensure index.html exists (only first run)
+    # Always write index.html so template updates propagate
     index_file = DOCS_DIR / "index.html"
-    if not index_file.exists():
-        index_file.write_text(INDEX_HTML, encoding="utf-8")
-        print("Created docs/index.html")
+    old_index = index_file.read_text(encoding="utf-8") if index_file.exists() else None
+    index_file.write_text(INDEX_HTML, encoding="utf-8")
 
-    if old == new:
+    if old == new and old_index == INDEX_HTML:
         print("No changes since last run.")
         return
 
@@ -230,30 +229,54 @@ INDEX_HTML = """<!DOCTYPE html>
          background: #111; color: #ddd; }
   h1 { color: #e8e2cf; }
   .meta { color: #888; margin-bottom: 1.5rem; }
+  .updated { color: #c9a; }
   table { border-collapse: collapse; width: 100%; }
-  th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #333; }
+  th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid #333; }
   th { color: #c9a; }
   td.qty { text-align: right; }
   tr:hover { background: #1c1c1c; }
+  .icon { width: 32px; height: 32px; vertical-align: middle; margin-right: 0.6rem; }
+  .hullname { display: inline-flex; align-items: center; gap: 0.6rem; }
   .total { margin-top: 1rem; font-weight: bold; }
 </style>
 </head>
 <body>
 <h1>Packaged Ship Hulls</h1>
 <p class="meta" id="meta">Loading…</p>
+<p class="meta">Last updated: <span class="updated" id="updated"></span></p>
 <table>
   <thead><tr><th>Hull</th><th>Quantity</th></tr></thead>
   <tbody id="rows"></tbody>
 </table>
 <p class="total" id="total"></p>
 <script>
+function timeAgo(iso) {
+  const s = Math.floor((Date.now() - new Date(iso)) / 1000);
+  if (s < 5) return 'just now';
+  const units = [['day', 86400], ['hour', 3600], ['minute', 60], ['second', 1]];
+  for (const [name, secs] of units) {
+    if (s >= secs) {
+      const v = Math.floor(s / secs);
+      return `${v} ${name}${v > 1 ? 's' : ''} ago`;
+    }
+  }
+}
 fetch('data.json').then(r => r.json()).then(d => {
   document.getElementById('meta').textContent =
-    `${d.character} — ${d.location} — updated ${d.updated}`;
+    `${d.character} — ${d.location}`;
   document.getElementById('rows').innerHTML = d.hulls
-    .map(h => `<tr><td>${h.name}</td><td class="qty">${h.quantity}</td></tr>`).join('');
+    .map(h => `<tr><td><span class="hullname">` +
+      `<img class="icon" loading="lazy" alt="" ` +
+      `src="https://images.evetech.net/types/${h.type_id}/icon?size=32">` +
+      `${h.name}</span></td><td class="qty">${h.quantity}</td></tr>`).join('');
   document.getElementById('total').textContent =
     `${d.total_hulls} hulls total (${d.distinct_types} types)`;
+  const upd = document.getElementById('updated');
+  const tick = () => {
+    upd.textContent = `${new Date(d.updated).toLocaleString()} — ${timeAgo(d.updated)}`;
+  };
+  tick();
+  setInterval(tick, 1000);
 }).catch(e => document.getElementById('meta').textContent = 'Failed to load data');
 </script>
 </body>
