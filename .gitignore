@@ -1,0 +1,12 @@
+# Secrets / tokens — never commit
+config.json
+*.token
+*.secret
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Local caches
+cache/

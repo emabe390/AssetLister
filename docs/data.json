@@ -1,0 +1,269 @@
+{
+    "character": "Kalder Okanata",
+    "location": "Dal VI - Moon 1 - Republic Justice Department Tribunal",
+    "total_hulls": 994,
+    "distinct_types": 52,
+    "updated": "2026-08-20T16:12:40+00:00",
+    "hulls": [
+        {
+            "type_id": 73796,
+            "name": "Catalyst Navy Issue",
+            "quantity": 80
+        },
+        {
+            "type_id": 603,
+            "name": "Merlin",
+            "quantity": 60
+        },
+        {
+            "type_id": 597,
+            "name": "Punisher",
+            "quantity": 52
+        },
+        {
+            "type_id": 29340,
+            "name": "Osprey Navy Issue",
+            "quantity": 50
+        },
+        {
+            "type_id": 587,
+            "name": "Rifter",
+            "quantity": 50
+        },
+        {
+            "type_id": 3766,
+            "name": "Vigil",
+            "quantity": 48
+        },
+        {
+            "type_id": 17634,
+            "name": "Caracal Navy Issue",
+            "quantity": 41
+        },
+        {
+            "type_id": 622,
+            "name": "Stabber",
+            "quantity": 41
+        },
+        {
+            "type_id": 32880,
+            "name": "Venture",
+            "quantity": 40
+        },
+        {
+            "type_id": 29336,
+            "name": "Scythe Fleet Issue",
+            "quantity": 37
+        },
+        {
+            "type_id": 33155,
+            "name": "Harbinger Navy Issue",
+            "quantity": 34
+        },
+        {
+            "type_id": 24702,
+            "name": "Hurricane",
+            "quantity": 30
+        },
+        {
+            "type_id": 73794,
+            "name": "Thrasher Fleet Issue",
+            "quantity": 30
+        },
+        {
+            "type_id": 630,
+            "name": "Bellicose",
+            "quantity": 29
+        },
+        {
+            "type_id": 73789,
+            "name": "Coercer Navy Issue",
+            "quantity": 25
+        },
+        {
+            "type_id": 17812,
+            "name": "Republic Fleet Firetail",
+            "quantity": 21
+        },
+        {
+            "type_id": 72907,
+            "name": "Magnate Navy Issue",
+            "quantity": 20
+        },
+        {
+            "type_id": 91858,
+            "name": "Talwar Fleet Issue",
+            "quantity": 20
+        },
+        {
+            "type_id": 633,
+            "name": "Celestis",
+            "quantity": 20
+        },
+        {
+            "type_id": 91857,
+            "name": "Corax Navy Issue",
+            "quantity": 20
+        },
+        {
+            "type_id": 17841,
+            "name": "Federation Navy Comet",
+            "quantity": 20
+        },
+        {
+            "type_id": 626,
+            "name": "Vexor",
+            "quantity": 17
+        },
+        {
+            "type_id": 16242,
+            "name": "Thrasher",
+            "quantity": 17
+        },
+        {
+            "type_id": 91775,
+            "name": "Dragoon Navy Issue",
+            "quantity": 15
+        },
+        {
+            "type_id": 72872,
+            "name": "Prophecy Navy Issue",
+            "quantity": 13
+        },
+        {
+            "type_id": 628,
+            "name": "Arbitrator",
+            "quantity": 13
+        },
+        {
+            "type_id": 629,
+            "name": "Rupture",
+            "quantity": 12
+        },
+        {
+            "type_id": 33153,
+            "name": "Drake Navy Issue",
+            "quantity": 11
+        },
+        {
+            "type_id": 29337,
+            "name": "Augoror Navy Issue",
+            "quantity": 10
+        },
+        {
+            "type_id": 37454,
+            "name": "Vigil Fleet Issue",
+            "quantity": 10
+        },
+        {
+            "type_id": 623,
+            "name": "Moa",
+            "quantity": 10
+        },
+        {
+            "type_id": 621,
+            "name": "Caracal",
+            "quantity": 10
+        },
+        {
+            "type_id": 17713,
+            "name": "Stabber Fleet Issue",
+            "quantity": 10
+        },
+        {
+            "type_id": 593,
+            "name": "Tristan",
+            "quantity": 9
+        },
+        {
+            "type_id": 72811,
+            "name": "Cyclone Fleet Issue",
+            "quantity": 7
+        },
+        {
+            "type_id": 627,
+            "name": "Thorax",
+            "quantity": 6
+        },
+        {
+            "type_id": 33151,
+            "name": "Brutix Navy Issue",
+            "quantity": 5
+        },
+        {
+            "type_id": 645,
+            "name": "Dominix",
+            "quantity": 5
+        },
+        {
+            "type_id": 4310,
+            "name": "Tornado",
+            "quantity": 5
+        },
+        {
+            "type_id": 11200,
+            "name": "Taranis",
+            "quantity": 5
+        },
+        {
+            "type_id": 11134,
+            "name": "Amarr Shuttle",
+            "quantity": 5
+        },
+        {
+            "type_id": 11400,
+            "name": "Jaguar",
+            "quantity": 4
+        },
+        {
+            "type_id": 17703,
+            "name": "Imperial Navy Slicer",
+            "quantity": 4
+        },
+        {
+            "type_id": 72869,
+            "name": "Myrmidon Navy Issue",
+            "quantity": 4
+        },
+        {
+            "type_id": 11132,
+            "name": "Minmatar Shuttle",
+            "quantity": 3
+        },
+        {
+            "type_id": 624,
+            "name": "Maller",
+            "quantity": 3
+        },
+        {
+            "type_id": 29344,
+            "name": "Exequror Navy Issue",
+            "quantity": 3
+        },
+        {
+            "type_id": 643,
+            "name": "Armageddon",
+            "quantity": 3
+        },
+        {
+            "type_id": 655,
+            "name": "Epithal",
+            "quantity": 2
+        },
+        {
+            "type_id": 672,
+            "name": "Caldari Shuttle",
+            "quantity": 2
+        },
+        {
+            "type_id": 4306,
+            "name": "Naga",
+            "quantity": 2
+        },
+        {
+            "type_id": 22440,
+            "name": "Panther",
+            "quantity": 1
+        }
+    ]
+}

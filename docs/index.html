@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AssetLister — Kalder Okanata</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 48rem;
+         background: #111; color: #ddd; }
+  h1 { color: #e8e2cf; }
+  .meta { color: #888; margin-bottom: 1.5rem; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #333; }
+  th { color: #c9a; }
+  td.qty { text-align: right; }
+  tr:hover { background: #1c1c1c; }
+  .total { margin-top: 1rem; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>Packaged Ship Hulls</h1>
+<p class="meta" id="meta">Loading…</p>
+<table>
+  <thead><tr><th>Hull</th><th>Quantity</th></tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+<p class="total" id="total"></p>
+<script>
+fetch('data.json').then(r => r.json()).then(d => {
+  document.getElementById('meta').textContent =
+    `${d.character} — ${d.location} — updated ${d.updated}`;
+  document.getElementById('rows').innerHTML = d.hulls
+    .map(h => `<tr><td>${h.name}</td><td class="qty">${h.quantity}</td></tr>`).join('');
+  document.getElementById('total').textContent =
+    `${d.total_hulls} hulls total (${d.distinct_types} types)`;
+}).catch(e => document.getElementById('meta').textContent = 'Failed to load data');
+</script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+"""AssetLister updater.
+
+Fetches Kalder Okanata's assets from EVE ESI, filters for packaged ship
+hulls at the configured station, writes the static site data (docs/),
+and commits + pushes changes if the data changed.
+
+Run:  py update.py
+"""
+
+import base64
+import json
+import subprocess
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+from datetime import datetime, timezone
+from pathlib import Path
+
+sys.stdout.reconfigure(line_buffering=True)
+
+CONFIG_FILE = "config.json"
+TOKENS_FILE = "tokens.json"
+CACHE_DIR = Path("cache")
+DOCS_DIR = Path("docs")
+
+ESI = "https://esi.evetech.net"
+TOKEN_URL = "https://login.eveonline.com/v2/oauth/token"
+
+SHIP_CATEGORY_ID = 6  # category "Ship"
+STATION_ID = None  # filled from config at runtime
+
+UA = "AssetLister github.com/emabe390/AssetLister"
+
+
+def load_json(path):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def save_json(path, data):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4)
+
+
+def http_json(url, data=None, headers=None, method=None):
+    req = urllib.request.Request(url, data=data, headers=headers or {}, method=method)
+    with urllib.request.urlopen(req) as r:
+        return json.loads(r.read())
+
+
+def get_access_token(cfg, tokens):
+    """Use the refresh token to mint a fresh access token."""
+    client_id = cfg["client_id"]
+    client_secret = cfg.get("client_secret", "")
+    basic = base64.b64encode(f"{client_id}:{client_secret}".encode()).decode()
+    data = urllib.parse.urlencode({
+        "grant_type": "refresh_token",
+        "refresh_token": tokens["refresh_token"],
+    }).encode()
+    resp = http_json(
+        TOKEN_URL,
+        data=data,
+        headers={
+            "Authorization": f"Basic {basic}",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": UA,
+        },
+        method="POST",
+    )
+    tokens["access_token"] = resp["access_token"]
+    if "refresh_token" in resp:  # ESI may rotate refresh tokens
+        tokens["refresh_token"] = resp["refresh_token"]
+    save_json(TOKENS_FILE, tokens)
+    return resp["access_token"]
+
+
+def fetch_assets(character_id, access_token):
+    """Fetch all asset pages for the character."""
+    url = f"{ESI}/v5/characters/{character_id}/assets/"
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "User-Agent": UA,
+        "Accept": "application/json",
+    }
+    items = []
+    page = 1
+    while True:
+        req = urllib.request.Request(f"{url}?page={page}", headers=headers)
+        with urllib.request.urlopen(req) as r:
+            total_pages = int(r.headers.get("x-pages", 1))
+            items.extend(json.loads(r.read()))
+        if page >= total_pages:
+            break
+        page += 1
+    return items
+
+
+def esi_get(path):
+    """Unauthenticated public ESI GET with local file cache."""
+    cache_file = CACHE_DIR / (path.strip("/").replace("/", "_") + ".json")
+    if cache_file.exists():
+        return json.loads(cache_file.read_text(encoding="utf-8"))
+    data = http_json(f"{ESI}{path}", headers={"User-Agent": UA})
+    CACHE_DIR.mkdir(exist_ok=True)
+    cache_file.write_text(json.dumps(data), encoding="utf-8")
+    return data
+
+
+def esi_post_names(ids):
+    """POST /v1/universe/names/ in chunks of 1000; returns id -> name."""
+    result = {}
+    ids = list(ids)
+    for i in range(0, len(ids), 1000):
+        chunk = ids[i : i + 1000]
+        body = json.dumps(chunk).encode()
+        req = urllib.request.Request(
+            f"{ESI}/v3/universe/names/",
+            data=body,
+            headers={"User-Agent": UA, "Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req) as r:
+            for item in json.loads(r.read()):
+                result[item["id"]] = item["name"]
+    return result
+
+
+def is_ship_hull(type_id):
+    """True if the type belongs to category 6 (Ship). Cached type/group lookups."""
+    type_info = esi_get(f"/v3/universe/types/{type_id}/")
+    group_id = type_info["group_id"]
+    group_info = esi_get(f"/v1/universe/groups/{group_id}/")
+    return group_info["category_id"] == SHIP_CATEGORY_ID
+
+
+def git(*args):
+    r = subprocess.run(
+        ["git", *args], capture_output=True, text=True
+    )
+    if r.returncode != 0:
+        print(f"git {' '.join(args)} failed:\n{r.stderr}")
+    return r
+
+
+def main():
+    cfg = load_json(CONFIG_FILE)
+    tokens = load_json(TOKENS_FILE)
+    character_id = cfg["character_id"]
+    station_id = cfg["location"]["station_id"]
+
+    print(f"Refreshing access token for {cfg['character_name']}...")
+    access_token = get_access_token(cfg, tokens)
+
+    print("Fetching assets (all pages)...")
+    assets = fetch_assets(character_id, access_token)
+    print(f"  {len(assets)} total asset rows")
+
+    # Filter: packaged items at the target station
+    candidates = [
+        a for a in assets
+        if not a.get("is_singleton", False) and a.get("location_id") == station_id
+    ]
+    print(f"  {len(candidates)} packaged rows at station {station_id}")
+
+    # Aggregate quantity per type
+    quantities = {}
+    for a in candidates:
+        quantities[a["type_id"]] = quantities.get(a["type_id"], 0) + a["quantity"]
+
+    # Keep only ship hulls
+    hulls = {}
+    for type_id, qty in quantities.items():
+        try:
+            if is_ship_hull(type_id):
+                hulls[type_id] = qty
+        except urllib.error.HTTPError as e:
+            print(f"  warning: type {type_id} lookup failed: {e.code}")
+
+    print(f"  {len(hulls)} distinct ship hull types")
+
+    # Resolve names
+    names = esi_post_names(list(hulls.keys()))
+
+    # Build data.json
+    rows = [
+        {"type_id": tid, "name": names.get(tid, f"type {tid}"), "quantity": qty}
+        for tid, qty in sorted(hulls.items(), key=lambda kv: -kv[1])
+    ]
+    data = {
+        "character": cfg["character_name"],
+        "location": cfg["location"]["name"],
+        "total_hulls": sum(hulls.values()),
+        "distinct_types": len(hulls),
+        "updated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "hulls": rows,
+    }
+
+    DOCS_DIR.mkdir(exist_ok=True)
+    data_file = DOCS_DIR / "data.json"
+    old = data_file.read_text(encoding="utf-8") if data_file.exists() else None
+    new = json.dumps(data, indent=4)
+    data_file.write_text(new, encoding="utf-8")
+
+    # Ensure index.html exists (only first run)
+    index_file = DOCS_DIR / "index.html"
+    if not index_file.exists():
+        index_file.write_text(INDEX_HTML, encoding="utf-8")
+        print("Created docs/index.html")
+
+    if old == new:
+        print("No changes since last run.")
+        return
+
+    print("Data changed — committing and pushing...")
+    git("add", "docs/")
+    git("commit", "-m", f"Update asset data {data['updated']}")
+    git("push")
+    print("Done.")
+
+
+INDEX_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AssetLister — Kalder Okanata</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 48rem;
+         background: #111; color: #ddd; }
+  h1 { color: #e8e2cf; }
+  .meta { color: #888; margin-bottom: 1.5rem; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #333; }
+  th { color: #c9a; }
+  td.qty { text-align: right; }
+  tr:hover { background: #1c1c1c; }
+  .total { margin-top: 1rem; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>Packaged Ship Hulls</h1>
+<p class="meta" id="meta">Loading…</p>
+<table>
+  <thead><tr><th>Hull</th><th>Quantity</th></tr></thead>
+  <tbody id="rows"></tbody>
+</table>
+<p class="total" id="total"></p>
+<script>
+fetch('data.json').then(r => r.json()).then(d => {
+  document.getElementById('meta').textContent =
+    `${d.character} — ${d.location} — updated ${d.updated}`;
+  document.getElementById('rows').innerHTML = d.hulls
+    .map(h => `<tr><td>${h.name}</td><td class="qty">${h.quantity}</td></tr>`).join('');
+  document.getElementById('total').textContent =
+    `${d.total_hulls} hulls total (${d.distinct_types} types)`;
+}).catch(e => document.getElementById('meta').textContent = 'Failed to load data');
+</script>
+</body>
+</html>
+"""
+
+
+if __name__ == "__main__":
+    main()
