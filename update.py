@@ -141,7 +141,7 @@ def fetch_janice_prices(hulls, names):
         "designation": 1,
         "pricing": 1,        # effective prices
         "pricingVariant": 1,
-        "pricePercentage": 100,
+        "pricePercentage": 1.0,  # multiplier, NOT percent (100 would 100x the price!)
         "input": "\n".join(lines),
         "comment": "",
         "compactize": False,
@@ -163,10 +163,10 @@ def fetch_janice_prices(hulls, names):
     prices = {}
     for item in result.get("items", []):
         tid = item["itemType_eid"]
-        qty = item["amount"]
-        sell_total = item.get("effectivePrices", {}).get("sellPrice", 0)
-        if qty > 0:
-            prices[tid] = sell_total / qty
+        # sellPrice is per-unit; sellPriceTotal is for the whole stack
+        unit_price = item.get("effectivePrices", {}).get("sellPrice", 0)
+        if unit_price:
+            prices[tid] = unit_price
     if result.get("failures"):
         print(f"  warning: janice failures: {result['failures'][:200]}")
     return prices
