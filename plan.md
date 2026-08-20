@@ -102,3 +102,54 @@ A website that lists all packaged ship hulls owned by a single character at
   `py -m pip install requests` for dependencies
 - Keep dependencies minimal: `requests` only, if possible
 - ESI requires a `User-Agent` header identifying the app
+
+## ESI Endpoints (verified live)
+
+### Core: assets
+
+| Endpoint | Auth | Purpose |
+|---|---|---|
+| `GET /v5/characters/{character_id}/assets/` | ✅ `esi-assets.read_assets.v1` | Asset list, paginated via `X-Pages` header. Each item: `type_id`, `quantity`, `location_id`, `is_singleton` |
+
+Filter: `is_singleton: false` (packaged) + correct `location_id`.
+
+Location ID interpretation:
+- `30000000–32000000` → solar system
+- `60000000–64000000` → NPC station
+- `≥ 1000000000000` → player structure
+
+### Location resolution
+
+| Endpoint | Auth | Purpose |
+|---|---|---|
+| `GET /v2/universe/stations/{station_id}/` | ❌ public | NPC station info (name, system) |
+| `GET /v2/universe/structures/{structure_id}/` | ✅ required | Player structure info (needs docking rights) |
+
+### Name/type resolution
+
+| Endpoint | Auth | Purpose |
+|---|---|---|
+| `POST /v3/universe/names/` (body: `[ids]`, max 1000) | ❌ public | Bulk ID → name |
+| `GET /v3/universe/types/{type_id}/` | ❌ public | Type details incl. `group_id` (cacheable) |
+| `GET /v1/universe/groups/{group_id}/` | ❌ public | Group details incl. `category_id` (category **6** = Ship → it's a hull) |
+
+### Optional
+
+| Endpoint | Auth | Purpose |
+|---|---|---|
+| `GET /v1/markets/prices/` | ❌ public | Adjusted/average prices for all types → estimated hull value |
+
+### Auth (SSO, not ESI proper)
+
+| Endpoint | Purpose |
+|---|---|
+| `https://login.eveonline.com/v2/oauth/authorize` | Authorize (PKCE) |
+| `https://login.eveonline.com/v2/oauth/token` | Token / refresh token |
+| `https://login.eveonline.com/oauth/verify` | Verify → `character_id` + scopes |
+
+**Callback URL for the ESI app registration: `http://localhost:8756/`**
+(CCP SSO allows plain `http` only for `localhost`/`127.0.0.1`; the script
+runs a one-shot local listener on this port to capture the auth code.)
+
+Minimal call flow: assets → names (bulk) → types (per unique type, cached) →
+groups (confirm category 6 = Ship).
