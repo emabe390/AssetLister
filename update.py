@@ -11,6 +11,7 @@ import base64
 import json
 import subprocess
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -28,6 +29,8 @@ ESI = "https://esi.evetech.net"
 TOKEN_URL = "https://login.eveonline.com/v2/oauth/token"
 
 SHIP_CATEGORY_ID = 6  # category "Ship"
+JITA_STATION_ID = 60003760  # Jita IV - Moon 4 - Caldari Navy Assembly Plant
+THE_FORGE_REGION_ID = 10000002
 STATION_ID = None  # filled from config at runtime
 
 UA = "AssetLister github.com/emabe390/AssetLister"
@@ -126,6 +129,26 @@ def esi_post_names(ids):
     return result
 
 
+def fetch_jita_sell_price(type_id):
+    """Cheapest sell order for a type at Jita 4-4, or None if none exist."""
+    url = f"{ESI}/v1/markets/{THE_FORGE_REGION_ID}/orders/?type_id={type_id}&order_type=sell"
+    page = 1
+    best = None
+    while True:
+        req = urllib.request.Request(f"{url}&page={page}", headers={"User-Agent": UA})
+        with urllib.request.urlopen(req) as r:
+            total_pages = int(r.headers.get("x-pages", 1))
+            for o in json.loads(r.read()):
+                if o["location_id"] == JITA_STATION_ID:
+                    p = o["price"]
+                    if best is None or p < best:
+                        best = p
+        if page >= total_pages:
+            break
+        page += 1
+    return best
+
+
 def is_ship_hull(type_id):
     """True if the type belongs to category 6 (Ship). Cached type/group lookups."""
     type_info = esi_get(f"/v3/universe/types/{type_id}/")
@@ -182,16 +205,37 @@ def main():
     # Resolve names
     names = esi_post_names(list(hulls.keys()))
 
+    # Jita 4-4 sell prices (cheapest sell order per type)
+    print("Fetching Jita sell prices...")
+    prices = {}
+    for tid in hulls:
+        try:
+            prices[tid] = fetch_jita_sell_price(tid)
+        except urllib.error.HTTPError as e:
+            print(f"  warning: market orders for type {tid} failed: {e.code}")
+        time.sleep(0.1)  # stay polite with ESI rate limits
+    priced = sum(1 for p in prices.values() if p is not None)
+    print(f"  {priced}/{len(hulls)} types have sell orders at Jita 4-4")
+
     # Build data.json
     rows = [
-        {"type_id": tid, "name": names.get(tid, f"type {tid}"), "quantity": qty}
+        {
+            "type_id": tid,
+            "name": names.get(tid, f"type {tid}"),
+            "quantity": qty,
+            "jita_sell": prices.get(tid),
+        }
         for tid, qty in sorted(hulls.items(), key=lambda kv: -kv[1])
     ]
+    total_value = sum(
+        p * hulls[tid] for tid, p in prices.items() if p is not None
+    )
     data = {
         "character": cfg["character_name"],
         "location": cfg["location"]["name"],
         "total_hulls": sum(hulls.values()),
         "distinct_types": len(hulls),
+        "total_value": total_value,
         "updated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "hulls": rows,
     }
@@ -234,6 +278,8 @@ INDEX_HTML = """<!DOCTYPE html>
   th, td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid #333; }
   th { color: #c9a; }
   td.qty { text-align: right; }
+  th.qty, th.price { text-align: right; }
+  td.price { text-align: right; color: #b6c7a6; white-space: nowrap; }
   tr:hover { background: #1c1c1c; }
   .icon { width: 32px; height: 32px; vertical-align: middle; margin-right: 0.6rem; }
   .hullname { display: inline-flex; align-items: center; gap: 0.6rem; }
@@ -245,7 +291,7 @@ INDEX_HTML = """<!DOCTYPE html>
 <p class="meta" id="meta">Loading…</p>
 <p class="meta">Last updated: <span class="updated" id="updated"></span></p>
 <table>
-  <thead><tr><th>Hull</th><th>Quantity</th></tr></thead>
+  <thead><tr><th>Hull</th><th class="qty">Qty</th><th class="price">Jita Sell</th><th class="price">Line Value</th></tr></thead>
   <tbody id="rows"></tbody>
 </table>
 <p class="total" id="total"></p>
@@ -261,16 +307,29 @@ function timeAgo(iso) {
     }
   }
 }
+function isk(n) {
+  if (n === null || n === undefined) return '—';
+  if (n >= 1e12) return (n / 1e12).toFixed(2) + 'T ISK';
+  if (n >= 1e9)  return (n / 1e9).toFixed(2) + 'B ISK';
+  if (n >= 1e6)  return (n / 1e6).toFixed(2) + 'M ISK';
+  if (n >= 1e3)  return (n / 1e3).toFixed(1) + 'K ISK';
+  return n.toFixed(0) + ' ISK';
+}
 fetch('data.json').then(r => r.json()).then(d => {
   document.getElementById('meta').textContent =
     `${d.character} — ${d.location}`;
   document.getElementById('rows').innerHTML = d.hulls
-    .map(h => `<tr><td><span class="hullname">` +
-      `<img class="icon" loading="lazy" alt="" ` +
-      `src="https://images.evetech.net/types/${h.type_id}/icon?size=32">` +
-      `${h.name}</span></td><td class="qty">${h.quantity}</td></tr>`).join('');
+    .map(h => {
+      const value = h.jita_sell !== null ? h.jita_sell * h.quantity : null;
+      return `<tr><td><span class="hullname">` +
+        `<img class="icon" loading="lazy" alt="" ` +
+        `src="https://images.evetech.net/types/${h.type_id}/icon?size=32">` +
+        `${h.name}</span></td><td class="qty">${h.quantity}</td>` +
+        `<td class="price">${isk(h.jita_sell)}</td>` +
+        `<td class="price">${isk(value)}</td></tr>`;
+    }).join('');
   document.getElementById('total').textContent =
-    `${d.total_hulls} hulls total (${d.distinct_types} types)`;
+    `${d.total_hulls} hulls total (${d.distinct_types} types) — est. value ${isk(d.total_value)}`;
   const upd = document.getElementById('updated');
   const tick = () => {
     upd.textContent = `${new Date(d.updated).toLocaleString()} — ${timeAgo(d.updated)}`;
