@@ -3,20 +3,20 @@
     "location": "Dal VI - Moon 1 - Republic Justice Department Tribunal",
     "total_hulls": 920,
     "distinct_types": 61,
-    "total_value": 25380694500.0,
-    "updated": "2026-09-09T23:36:08+00:00",
+    "total_value": 25615076830.0,
+    "updated": "2026-09-10T01:36:11+00:00",
     "hulls": [
         {
             "type_id": 73796,
             "name": "Catalyst Navy Issue",
             "quantity": 77,
-            "jita_sell": 20630000.0
+            "jita_sell": 20660000.0
         },
         {
             "type_id": 603,
             "name": "Merlin",
             "quantity": 57,
-            "jita_sell": 110100.0
+            "jita_sell": 120700.0
         },
         {
             "type_id": 3766,
@@ -34,7 +34,7 @@
             "type_id": 597,
             "name": "Punisher",
             "quantity": 46,
-            "jita_sell": 440500.0
+            "jita_sell": 440400.0
         },
         {
             "type_id": 29340,
@@ -46,7 +46,7 @@
             "type_id": 32880,
             "name": "Venture",
             "quantity": 40,
-            "jita_sell": 229900.0
+            "jita_sell": 229800.0
         },
         {
             "type_id": 17634,
@@ -58,7 +58,7 @@
             "type_id": 622,
             "name": "Stabber",
             "quantity": 38,
-            "jita_sell": 12900000.0
+            "jita_sell": 12890000.0
         },
         {
             "type_id": 29336,
@@ -70,7 +70,7 @@
             "type_id": 33155,
             "name": "Harbinger Navy Issue",
             "quantity": 31,
-            "jita_sell": 126300000.0
+            "jita_sell": 134000000.0
         },
         {
             "type_id": 625,
@@ -88,7 +88,7 @@
             "type_id": 24702,
             "name": "Hurricane",
             "quantity": 24,
-            "jita_sell": 53290000.0
+            "jita_sell": 53300000.0
         },
         {
             "type_id": 73794,
@@ -118,7 +118,7 @@
             "type_id": 626,
             "name": "Vexor",
             "quantity": 17,
-            "jita_sell": 11470000.0
+            "jita_sell": 11300000.0
         },
         {
             "type_id": 91857,
@@ -154,7 +154,7 @@
             "type_id": 628,
             "name": "Arbitrator",
             "quantity": 13,
-            "jita_sell": 9475000.0
+            "jita_sell": 9477000.0
         },
         {
             "type_id": 72872,
@@ -166,37 +166,37 @@
             "type_id": 16242,
             "name": "Thrasher",
             "quantity": 11,
-            "jita_sell": 1213000.0
+            "jita_sell": 1210000.0
         },
         {
             "type_id": 623,
             "name": "Moa",
             "quantity": 10,
-            "jita_sell": 11260000.0
+            "jita_sell": 11250000.0
         },
         {
             "type_id": 593,
             "name": "Tristan",
             "quantity": 9,
-            "jita_sell": 421700.0
+            "jita_sell": 420000.0
         },
         {
             "type_id": 629,
             "name": "Rupture",
             "quantity": 9,
-            "jita_sell": 11690000.0
+            "jita_sell": 11000000.0
         },
         {
             "type_id": 621,
             "name": "Caracal",
             "quantity": 7,
-            "jita_sell": 10550000.0
+            "jita_sell": 10610000.0
         },
         {
             "type_id": 37454,
             "name": "Vigil Fleet Issue",
             "quantity": 7,
-            "jita_sell": 8722000.0
+            "jita_sell": 8721000.0
         },
         {
             "type_id": 17713,
@@ -214,7 +214,7 @@
             "type_id": 20125,
             "name": "Curse",
             "quantity": 5,
-            "jita_sell": 153000000.0
+            "jita_sell": 152800000.0
         },
         {
             "type_id": 11200,
@@ -226,19 +226,19 @@
             "type_id": 11400,
             "name": "Jaguar",
             "quantity": 5,
-            "jita_sell": 18000000.0
+            "jita_sell": 17850000.0
         },
         {
             "type_id": 33151,
             "name": "Brutix Navy Issue",
             "quantity": 5,
-            "jita_sell": 124700000.0
+            "jita_sell": 124600000.0
         },
         {
             "type_id": 645,
             "name": "Dominix",
             "quantity": 5,
-            "jita_sell": 151900000.0
+            "jita_sell": 152000000.0
         },
         {
             "type_id": 11134,
@@ -250,7 +250,7 @@
             "type_id": 33153,
             "name": "Drake Navy Issue",
             "quantity": 4,
-            "jita_sell": 125700000.0
+            "jita_sell": 125800000.0
         },
         {
             "type_id": 72869,
@@ -268,13 +268,13 @@
             "type_id": 72811,
             "name": "Cyclone Fleet Issue",
             "quantity": 3,
-            "jita_sell": 122100000.0
+            "jita_sell": 122200000.0
         },
         {
             "type_id": 11132,
             "name": "Minmatar Shuttle",
             "quantity": 3,
-            "jita_sell": 16730.0
+            "jita_sell": 16740.0
         },
         {
             "type_id": 624,
@@ -286,7 +286,7 @@
             "type_id": 29344,
             "name": "Exequror Navy Issue",
             "quantity": 3,
-            "jita_sell": 40000000.0
+            "jita_sell": 39970000.0
         },
         {
             "type_id": 643,
@@ -298,13 +298,13 @@
             "type_id": 655,
             "name": "Epithal",
             "quantity": 2,
-            "jita_sell": 2594000.0
+            "jita_sell": 2595000.0
         },
         {
             "type_id": 29990,
             "name": "Loki",
             "quantity": 2,
-            "jita_sell": 239300000.0
+            "jita_sell": 241000000.0
         },
         {
             "type_id": 4310,
@@ -316,7 +316,7 @@
             "type_id": 4306,
             "name": "Naga",
             "quantity": 2,
-            "jita_sell": 64920000.0
+            "jita_sell": 64900000.0
         },
         {
             "type_id": 29986,
@@ -328,25 +328,25 @@
             "type_id": 17718,
             "name": "Phantasm",
             "quantity": 1,
-            "jita_sell": 219700000.0
+            "jita_sell": 219600000.0
         },
         {
             "type_id": 85087,
             "name": "Tholos",
             "quantity": 1,
-            "jita_sell": 166500000.0
+            "jita_sell": 166100000.0
         },
         {
             "type_id": 17740,
             "name": "Vindicator",
             "quantity": 1,
-            "jita_sell": 899500000.0
+            "jita_sell": 899400000.0
         },
         {
             "type_id": 17736,
             "name": "Nightmare",
             "quantity": 1,
-            "jita_sell": 995100000.0
+            "jita_sell": 995000000.0
         },
         {
             "type_id": 29984,
@@ -358,13 +358,13 @@
             "type_id": 17922,
             "name": "Ashimmu",
             "quantity": 1,
-            "jita_sell": 239900000.0
+            "jita_sell": 240100000.0
         },
         {
             "type_id": 17703,
             "name": "Imperial Navy Slicer",
             "quantity": 1,
-            "jita_sell": 9190000.0
+            "jita_sell": 9194000.0
         },
         {
             "type_id": 22440,
