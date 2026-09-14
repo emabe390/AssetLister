@@ -51,12 +51,46 @@
   .panelHead { display: flex; justify-content: space-between; align-items: center;
                margin-bottom: 0.8rem; }
   .panelHead h2 { margin: 0; }
+  /* ---- Slide Services cross-link strip ---- */
+  .slide-strip { --strip-bg: #1a1a1a; --strip-border: #333; --strip-accent: #c9a;
+                 --strip-fg: #e8e2cf; --strip-sub: #888; --strip-label-fg: #777; }
+  .slide-strip { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0.75rem;
+                 max-width: 1200px; margin: 0 auto 1.25rem; padding: 0.25rem 0 0; }
+  .slide-strip-label { flex: 0 0 auto; align-self: center; writing-mode: vertical-rl;
+                       transform: rotate(180deg); font-size: 0.62rem; font-weight: 700;
+                       letter-spacing: 0.14em; text-transform: uppercase;
+                       color: var(--strip-label-fg); padding: 0 2px; user-select: none; }
+  .slide-strip-card { flex: 1 1 0; min-width: 15rem; display: flex; flex-direction: column;
+                      gap: 0.2rem; padding: 0.7rem 0.9rem; background: var(--strip-bg);
+                      border: 1px solid var(--strip-border); border-radius: 10px;
+                      text-decoration: none; transition: border-color 0.15s ease, transform 0.05s ease; }
+  .slide-strip-card:hover { border-color: var(--strip-accent); transform: translateY(-1px); }
+  .slide-strip-card:active { transform: translateY(0); }
+  .slide-strip-card strong { color: var(--strip-fg); font-size: 0.95rem; line-height: 1.2; }
+  .slide-strip-card span { color: var(--strip-sub); font-size: 0.8rem; line-height: 1.35; }
+  @media (max-width: 640px) {
+    .slide-strip { flex-direction: column; margin-bottom: 1rem; }
+    .slide-strip-label { writing-mode: horizontal-tb; transform: none; text-align: center; padding: 0; }
+    .slide-strip-card { min-width: 0; }
+  }
 </style>
 </head>
 <body>
 <h1>Packaged Ship Hulls</h1>
 <p class="meta" id="meta">Loading…</p>
 <p class="meta">Last updated: <span class="updated" id="updated"></span></p>
+<!-- CROSS-LINKS: other Slide services (keep in sync with _shared/slide-services-strip) -->
+<section class="slide-strip" aria-label="Other Slide services">
+  <span class="slide-strip-label">Slide Services</span>
+  <a class="slide-strip-card" href="https://emabe390.github.io/SlideContracting/">
+    <strong>Contract Market</strong>
+    <span>Need a fit? Browse alliance doctrine fits — or buy a pre-fitted ship ready to fly.</span>
+  </a>
+  <a class="slide-strip-card" href="https://emabe390.github.io/AltruismUnitedHauling/">
+    <strong>Hauling</strong>
+    <span>Got cargo to move? JF hauling Jita ↔ Hed, from 300 ISK/m³.</span>
+  </a>
+</section>
 <div class="layout">
   <div>
     <table>
