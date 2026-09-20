@@ -3,14 +3,14 @@
     "location": "Dal VI - Moon 1 - Republic Justice Department Tribunal",
     "total_hulls": 1162,
     "distinct_types": 63,
-    "total_value": 29407818020.8,
-    "updated": "2026-09-20T02:19:39+00:00",
+    "total_value": 29408709090.8,
+    "updated": "2026-09-20T04:19:49+00:00",
     "hulls": [
         {
             "type_id": 621,
             "name": "Caracal",
             "quantity": 76,
-            "jita_sell": 10000000.0
+            "jita_sell": 9990000.0
         },
         {
             "type_id": 32872,
@@ -46,7 +46,7 @@
             "type_id": 603,
             "name": "Merlin",
             "quantity": 55,
-            "jita_sell": 120000.0
+            "jita_sell": 124400.0
         },
         {
             "type_id": 597,
@@ -70,7 +70,7 @@
             "type_id": 32880,
             "name": "Venture",
             "quantity": 38,
-            "jita_sell": 220300.0
+            "jita_sell": 220200.0
         },
         {
             "type_id": 622,
@@ -112,13 +112,13 @@
             "type_id": 628,
             "name": "Arbitrator",
             "quantity": 23,
-            "jita_sell": 9067000.0
+            "jita_sell": 9070000.0
         },
         {
             "type_id": 73794,
             "name": "Thrasher Fleet Issue",
             "quantity": 22,
-            "jita_sell": 17880000.0
+            "jita_sell": 17890000.0
         },
         {
             "type_id": 29340,
@@ -130,7 +130,7 @@
             "type_id": 72907,
             "name": "Magnate Navy Issue",
             "quantity": 20,
-            "jita_sell": 8971000.0
+            "jita_sell": 8972000.0
         },
         {
             "type_id": 633,
@@ -160,13 +160,13 @@
             "type_id": 626,
             "name": "Vexor",
             "quantity": 17,
-            "jita_sell": 11880000.0
+            "jita_sell": 11940000.0
         },
         {
             "type_id": 91858,
             "name": "Talwar Fleet Issue",
             "quantity": 15,
-            "jita_sell": 16400000.0
+            "jita_sell": 16450000.0
         },
         {
             "type_id": 91857,
@@ -208,7 +208,7 @@
             "type_id": 593,
             "name": "Tristan",
             "quantity": 7,
-            "jita_sell": 413800.0
+            "jita_sell": 412000.0
         },
         {
             "type_id": 37454,
@@ -232,7 +232,7 @@
             "type_id": 11200,
             "name": "Taranis",
             "quantity": 5,
-            "jita_sell": 14110000.0
+            "jita_sell": 14100000.0
         },
         {
             "type_id": 11134,
@@ -244,7 +244,7 @@
             "type_id": 3766,
             "name": "Vigil",
             "quantity": 5,
-            "jita_sell": 385700.0
+            "jita_sell": 385000.0
         },
         {
             "type_id": 17713,
@@ -268,7 +268,7 @@
             "type_id": 72869,
             "name": "Myrmidon Navy Issue",
             "quantity": 4,
-            "jita_sell": 129200000.0
+            "jita_sell": 129300000.0
         },
         {
             "type_id": 11400,
@@ -286,7 +286,7 @@
             "type_id": 11132,
             "name": "Minmatar Shuttle",
             "quantity": 3,
-            "jita_sell": 14500.0
+            "jita_sell": 14490.0
         },
         {
             "type_id": 655,
@@ -346,7 +346,7 @@
             "type_id": 17736,
             "name": "Nightmare",
             "quantity": 1,
-            "jita_sell": 1091000000.0
+            "jita_sell": 1090000000.0
         },
         {
             "type_id": 17703,
