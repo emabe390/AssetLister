@@ -3,8 +3,8 @@
     "location": "Dal VI - Moon 1 - Republic Justice Department Tribunal",
     "total_hulls": 938,
     "distinct_types": 61,
-    "total_value": 29292787286.0,
-    "updated": "2026-10-03T01:15:21+00:00",
+    "total_value": 29279148336.0,
+    "updated": "2026-10-03T03:15:28+00:00",
     "hulls": [
         {
             "type_id": 16242,
@@ -94,7 +94,7 @@
             "type_id": 24702,
             "name": "Hurricane",
             "quantity": 24,
-            "jita_sell": 56140000.0
+            "jita_sell": 56120000.0
         },
         {
             "type_id": 73794,
@@ -142,7 +142,7 @@
             "type_id": 626,
             "name": "Vexor",
             "quantity": 17,
-            "jita_sell": 11540000.0
+            "jita_sell": 11530000.0
         },
         {
             "type_id": 24700,
@@ -166,13 +166,13 @@
             "type_id": 32880,
             "name": "Venture",
             "quantity": 10,
-            "jita_sell": 219300.0
+            "jita_sell": 219400.0
         },
         {
             "type_id": 629,
             "name": "Rupture",
             "quantity": 9,
-            "jita_sell": 10080000.0
+            "jita_sell": 10070000.0
         },
         {
             "type_id": 593,
@@ -196,7 +196,7 @@
             "type_id": 20125,
             "name": "Curse",
             "quantity": 5,
-            "jita_sell": 155900000.0
+            "jita_sell": 153400000.0
         },
         {
             "type_id": 33151,
@@ -214,7 +214,7 @@
             "type_id": 11134,
             "name": "Amarr Shuttle",
             "quantity": 5,
-            "jita_sell": 14950.0
+            "jita_sell": 14960.0
         },
         {
             "type_id": 3766,
@@ -286,7 +286,7 @@
             "type_id": 29990,
             "name": "Loki",
             "quantity": 2,
-            "jita_sell": 240600000.0
+            "jita_sell": 240400000.0
         },
         {
             "type_id": 624,
