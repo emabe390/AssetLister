@@ -1,10 +1,10 @@
 {
     "character": "Kalder Okanata",
     "location": "Dal VI - Moon 1 - Republic Justice Department Tribunal",
-    "total_hulls": 1129,
-    "distinct_types": 64,
-    "total_value": 29557915380.0,
-    "updated": "2026-10-06T03:32:24+00:00",
+    "total_hulls": 1032,
+    "distinct_types": 63,
+    "total_value": 27834605380.0,
+    "updated": "2026-10-06T05:32:49+00:00",
     "hulls": [
         {
             "type_id": 621,
@@ -13,22 +13,10 @@
             "jita_sell": 11590000.0
         },
         {
-            "type_id": 593,
-            "name": "Tristan",
-            "quantity": 67,
-            "jita_sell": 467000.0
-        },
-        {
             "type_id": 16242,
             "name": "Thrasher",
             "quantity": 64,
             "jita_sell": 1259000.0
-        },
-        {
-            "type_id": 73796,
-            "name": "Catalyst Navy Issue",
-            "quantity": 57,
-            "jita_sell": 19460000.0
         },
         {
             "type_id": 603,
@@ -73,10 +61,10 @@
             "jita_sell": 12620000.0
         },
         {
-            "type_id": 622,
-            "name": "Stabber",
-            "quantity": 38,
-            "jita_sell": 12850000.0
+            "type_id": 593,
+            "name": "Tristan",
+            "quantity": 37,
+            "jita_sell": 467000.0
         },
         {
             "type_id": 17634,
@@ -97,6 +85,18 @@
             "jita_sell": 440000.0
         },
         {
+            "type_id": 622,
+            "name": "Stabber",
+            "quantity": 28,
+            "jita_sell": 12850000.0
+        },
+        {
+            "type_id": 73796,
+            "name": "Catalyst Navy Issue",
+            "quantity": 27,
+            "jita_sell": 19460000.0
+        },
+        {
             "type_id": 633,
             "name": "Celestis",
             "quantity": 25,
@@ -113,12 +113,6 @@
             "name": "Hurricane",
             "quantity": 24,
             "jita_sell": 54380000.0
-        },
-        {
-            "type_id": 73794,
-            "name": "Thrasher Fleet Issue",
-            "quantity": 22,
-            "jita_sell": 16000000.0
         },
         {
             "type_id": 72872,
@@ -157,12 +151,6 @@
             "jita_sell": 13890.0
         },
         {
-            "type_id": 33155,
-            "name": "Harbinger Navy Issue",
-            "quantity": 19,
-            "jita_sell": 129000000.0
-        },
-        {
             "type_id": 626,
             "name": "Vexor",
             "quantity": 17,
@@ -185,6 +173,12 @@
             "name": "Myrmidon",
             "quantity": 15,
             "jita_sell": 52850000.0
+        },
+        {
+            "type_id": 33155,
+            "name": "Harbinger Navy Issue",
+            "quantity": 14,
+            "jita_sell": 129000000.0
         },
         {
             "type_id": 629,
