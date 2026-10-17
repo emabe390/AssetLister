@@ -4,7 +4,7 @@
     "total_hulls": 1063,
     "distinct_types": 65,
     "total_value": 24578988845.1,
-    "updated": "2026-10-17T04:55:01+00:00",
+    "updated": "2026-10-17T06:55:40+00:00",
     "hulls": [
         {
             "type_id": 621,
@@ -205,16 +205,16 @@
             "jita_sell": 155700000.0
         },
         {
-            "type_id": 11200,
-            "name": "Taranis",
-            "quantity": 5,
-            "jita_sell": 12060000.0
-        },
-        {
             "type_id": 33151,
             "name": "Brutix Navy Issue",
             "quantity": 5,
             "jita_sell": 123900000.0
+        },
+        {
+            "type_id": 11200,
+            "name": "Taranis",
+            "quantity": 5,
+            "jita_sell": 12060000.0
         },
         {
             "type_id": 32880,
@@ -265,16 +265,16 @@
             "jita_sell": 45770000.0
         },
         {
-            "type_id": 72811,
-            "name": "Cyclone Fleet Issue",
-            "quantity": 3,
-            "jita_sell": 111200000.0
-        },
-        {
             "type_id": 11400,
             "name": "Jaguar",
             "quantity": 3,
             "jita_sell": 23740000.0
+        },
+        {
+            "type_id": 72811,
+            "name": "Cyclone Fleet Issue",
+            "quantity": 3,
+            "jita_sell": 111200000.0
         },
         {
             "type_id": 11132,
@@ -301,28 +301,28 @@
             "jita_sell": 2521000.0
         },
         {
-            "type_id": 29990,
-            "name": "Loki",
-            "quantity": 2,
-            "jita_sell": 230700000.0
-        },
-        {
             "type_id": 4310,
             "name": "Tornado",
             "quantity": 2,
             "jita_sell": 69400000.0
         },
         {
-            "type_id": 624,
-            "name": "Maller",
-            "quantity": 2,
-            "jita_sell": 12190000.0
-        },
-        {
             "type_id": 4306,
             "name": "Naga",
             "quantity": 2,
             "jita_sell": 67990000.0
+        },
+        {
+            "type_id": 29990,
+            "name": "Loki",
+            "quantity": 2,
+            "jita_sell": 230700000.0
+        },
+        {
+            "type_id": 624,
+            "name": "Maller",
+            "quantity": 2,
+            "jita_sell": 12190000.0
         },
         {
             "type_id": 17812,
@@ -343,16 +343,16 @@
             "jita_sell": 214700000.0
         },
         {
-            "type_id": 85087,
-            "name": "Tholos",
-            "quantity": 1,
-            "jita_sell": 172000000.0
-        },
-        {
             "type_id": 32876,
             "name": "Corax",
             "quantity": 1,
             "jita_sell": 882900.0
+        },
+        {
+            "type_id": 85087,
+            "name": "Tholos",
+            "quantity": 1,
+            "jita_sell": 172000000.0
         },
         {
             "type_id": 11129,
