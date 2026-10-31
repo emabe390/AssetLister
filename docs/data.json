@@ -4,7 +4,7 @@
     "total_hulls": 1015,
     "distinct_types": 66,
     "total_value": 22746504810.3,
-    "updated": "2026-10-31T03:58:00+00:00",
+    "updated": "2026-10-31T05:58:03+00:00",
     "hulls": [
         {
             "type_id": 621,
@@ -229,16 +229,16 @@
             "jita_sell": 399000.0
         },
         {
-            "type_id": 17713,
-            "name": "Stabber Fleet Issue",
-            "quantity": 5,
-            "jita_sell": 37740000.0
-        },
-        {
             "type_id": 73794,
             "name": "Thrasher Fleet Issue",
             "quantity": 5,
             "jita_sell": 19960000.0
+        },
+        {
+            "type_id": 17713,
+            "name": "Stabber Fleet Issue",
+            "quantity": 5,
+            "jita_sell": 37740000.0
         },
         {
             "type_id": 33153,
@@ -247,16 +247,16 @@
             "jita_sell": 131800000.0
         },
         {
-            "type_id": 72869,
-            "name": "Myrmidon Navy Issue",
-            "quantity": 4,
-            "jita_sell": 124000000.0
-        },
-        {
             "type_id": 91775,
             "name": "Dragoon Navy Issue",
             "quantity": 4,
             "jita_sell": 21960000.0
+        },
+        {
+            "type_id": 72869,
+            "name": "Myrmidon Navy Issue",
+            "quantity": 4,
+            "jita_sell": 124000000.0
         },
         {
             "type_id": 37482,
