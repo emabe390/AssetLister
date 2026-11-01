@@ -4,7 +4,7 @@
     "total_hulls": 1015,
     "distinct_types": 68,
     "total_value": 23813776910.0,
-    "updated": "2026-11-01T03:58:55+00:00",
+    "updated": "2026-11-01T05:59:01+00:00",
     "hulls": [
         {
             "type_id": 621,
@@ -235,16 +235,16 @@
             "jita_sell": 436600.0
         },
         {
-            "type_id": 17713,
-            "name": "Stabber Fleet Issue",
-            "quantity": 5,
-            "jita_sell": 37000000.0
-        },
-        {
             "type_id": 73794,
             "name": "Thrasher Fleet Issue",
             "quantity": 5,
             "jita_sell": 19790000.0
+        },
+        {
+            "type_id": 17713,
+            "name": "Stabber Fleet Issue",
+            "quantity": 5,
+            "jita_sell": 37000000.0
         },
         {
             "type_id": 33153,
@@ -253,16 +253,16 @@
             "jita_sell": 129600000.0
         },
         {
-            "type_id": 72869,
-            "name": "Myrmidon Navy Issue",
-            "quantity": 4,
-            "jita_sell": 118000000.0
-        },
-        {
             "type_id": 91775,
             "name": "Dragoon Navy Issue",
             "quantity": 4,
             "jita_sell": 21630000.0
+        },
+        {
+            "type_id": 72869,
+            "name": "Myrmidon Navy Issue",
+            "quantity": 4,
+            "jita_sell": 118000000.0
         },
         {
             "type_id": 37482,
@@ -403,16 +403,16 @@
             "jita_sell": 843400000.0
         },
         {
-            "type_id": 22440,
-            "name": "Panther",
-            "quantity": 1,
-            "jita_sell": 756800000.0
-        },
-        {
             "type_id": 642,
             "name": "Apocalypse",
             "quantity": 1,
             "jita_sell": 149400000.0
+        },
+        {
+            "type_id": 22440,
+            "name": "Panther",
+            "quantity": 1,
+            "jita_sell": 756800000.0
         }
     ]
 }
