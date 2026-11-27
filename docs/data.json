@@ -4,7 +4,7 @@
     "total_hulls": 920,
     "distinct_types": 66,
     "total_value": 22399619370.0,
-    "updated": "2026-11-27T06:09:01+00:00",
+    "updated": "2026-11-27T08:09:30+00:00",
     "hulls": [
         {
             "type_id": 621,
@@ -79,16 +79,16 @@
             "jita_sell": 10850000.0
         },
         {
-            "type_id": 73796,
-            "name": "Catalyst Navy Issue",
-            "quantity": 27,
-            "jita_sell": 19540000.0
-        },
-        {
             "type_id": 593,
             "name": "Tristan",
             "quantity": 27,
             "jita_sell": 573700.0
+        },
+        {
+            "type_id": 73796,
+            "name": "Catalyst Navy Issue",
+            "quantity": 27,
+            "jita_sell": 19540000.0
         },
         {
             "type_id": 633,
@@ -295,28 +295,28 @@
             "jita_sell": 2462000.0
         },
         {
-            "type_id": 29990,
-            "name": "Loki",
-            "quantity": 2,
-            "jita_sell": 240000000.0
-        },
-        {
             "type_id": 4310,
             "name": "Tornado",
             "quantity": 2,
             "jita_sell": 67910000.0
         },
         {
-            "type_id": 624,
-            "name": "Maller",
-            "quantity": 2,
-            "jita_sell": 11280000.0
-        },
-        {
             "type_id": 4306,
             "name": "Naga",
             "quantity": 2,
             "jita_sell": 67960000.0
+        },
+        {
+            "type_id": 29990,
+            "name": "Loki",
+            "quantity": 2,
+            "jita_sell": 240000000.0
+        },
+        {
+            "type_id": 624,
+            "name": "Maller",
+            "quantity": 2,
+            "jita_sell": 11280000.0
         },
         {
             "type_id": 17812,
@@ -349,6 +349,12 @@
             "jita_sell": 823400.0
         },
         {
+            "type_id": 2161,
+            "name": "Crucifier",
+            "quantity": 1,
+            "jita_sell": 299900.0
+        },
+        {
             "type_id": 85087,
             "name": "Tholos",
             "quantity": 1,
@@ -359,12 +365,6 @@
             "name": "Gallente Shuttle",
             "quantity": 1,
             "jita_sell": 14450.0
-        },
-        {
-            "type_id": 2161,
-            "name": "Crucifier",
-            "quantity": 1,
-            "jita_sell": 299900.0
         },
         {
             "type_id": 17736,
